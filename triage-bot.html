@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Research Ops Intake Form</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body { background: #f0f4f8; }
+
+    .page-header {
+      background: linear-gradient(135deg, #1a3a5c 0%, #2c6fad 100%);
+      color: #fff;
+      padding: 2.5rem 2rem 2rem;
+      text-align: center;
+    }
+    .page-header h1 { color: #fff; font-size: 1.9rem; margin-bottom: 0.4rem; }
+    .page-header p { color: #b8d4f0; font-size: 1rem; margin: 0; }
+    .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #fff;
+      font-size: 0.75rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 20px;
+      margin-bottom: 0.8rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .layout {
+      max-width: 1100px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    /* ── Intake form panel ── */
+    .form-panel {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      padding: 2rem;
+    }
+    .form-panel h2 {
+      font-size: 1.1rem;
+      color: #1a3a5c;
+      margin: 0 0 1.5rem;
+    }
+
+    .form-section {
+      margin-bottom: 1.5rem;
+    }
+    .form-section label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #374151;
+      margin-bottom: 0.4rem;
+    }
+    .form-section label .required {
+      color: #e53e3e;
+      margin-left: 2px;
+    }
+    .form-section .hint {
+      font-size: 0.78rem;
+      color: #9ca3af;
+      font-weight: 400;
+      margin-left: 4px;
+    }
+    .form-section input[type="text"],
+    .form-section textarea,
+    .form-section select {
+      width: 100%;
+      padding: 0.6rem 0.85rem;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      color: #2d3748;
+      background: #fff;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      appearance: none;
+    }
+    .form-section input[type="text"]:focus,
+    .form-section textarea:focus,
+    .form-section select:focus {
+      outline: none;
+      border-color: #2c6fad;
+      box-shadow: 0 0 0 3px rgba(44,111,173,0.12);
+    }
+    .form-section textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    .select-wrap { position: relative; }
+    .select-wrap::after {
+      content: '▾';
+      position: absolute;
+      right: 0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+      pointer-events: none;
+      font-size: 0.85rem;
+    }
+
+    .radio-group, .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .radio-group label, .checkbox-group label {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 400;
+      font-size: 0.88rem;
+      color: #374151;
+      cursor: pointer;
+      padding: 0.5rem 0.75rem;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 8px;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .radio-group label:hover, .checkbox-group label:hover {
+      border-color: #2c6fad;
+      background: #f0f6ff;
+    }
+    .radio-group input, .checkbox-group input {
+      accent-color: #2c6fad;
+      width: 16px; height: 16px;
+      flex-shrink: 0;
+    }
+    .radio-group label.selected, .checkbox-group label.selected {
+      border-color: #2c6fad;
+      background: #f0f6ff;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #f0f4f8;
+      margin: 1.5rem 0;
+    }
+
+    .submit-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+    .submit-btn {
+      background: #2c6fad;
+      color: #fff;
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .submit-btn:hover { background: #1a3a5c; }
+    .submit-btn:active { transform: scale(0.98); }
+    .reset-btn {
+      background: none;
+      border: none;
+      color: #9ca3af;
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-family: inherit;
+      padding: 0;
+      text-decoration: underline;
+    }
+    .reset-btn:hover { color: #6b7280; }
+
+    /* ── Triage output panel ── */
+    .triage-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      position: sticky;
+      top: 1.5rem;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      padding: 1.25rem;
+    }
+    .card-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #9ca3af;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .placeholder-state {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: #c4cdd6;
+      font-size: 0.88rem;
+    }
+    .placeholder-state .icon { font-size: 2rem; margin-bottom: 0.5rem; }
+
+    .triage-result { display: none; }
+    .triage-result.visible { display: block; }
+
+    .priority-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.3rem 0.9rem;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+    .priority-high { background: #fdecea; color: #c0392b; }
+    .priority-medium { background: #fef9e7; color: #d68910; }
+    .priority-low { background: #eafaf1; color: #1e8449; }
+
+    .triage-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.55rem 0;
+      border-bottom: 1px solid #f5f7fa;
+      font-size: 0.88rem;
+    }
+    .triage-row:last-child { border-bottom: none; }
+    .triage-label { color: #9ca3af; }
+    .triage-value { font-weight: 600; color: #2d3748; text-align: right; max-width: 60%; }
+
+    .tag-list { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
+    .tag {
+      background: #edf2f7;
+      color: #4a5568;
+      font-size: 0.78rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+    }
+    .tag.warn { background: #fef3cd; color: #856404; }
+    .tag.ok { background: #d4edda; color: #155724; }
+
+    .flag-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .flag-item {
+      display: flex; align-items: flex-start; gap: 0.5rem;
+      font-size: 0.84rem; color: #555;
+      line-height: 1.45;
+    }
+    .flag-icon { flex-shrink: 0; margin-top: 1px; }
+
+    .next-steps { list-style: none; padding: 0; margin: 0; }
+    .next-steps li {
+      display: flex; align-items: flex-start; gap: 0.6rem;
+      padding: 0.4rem 0;
+      font-size: 0.86rem;
+      color: #444;
+      border-bottom: 1px solid #f5f5f5;
+    }
+    .next-steps li:last-child { border-bottom: none; }
+    .step-num {
+      background: #2c6fad;
+      color: #fff;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      font-size: 0.7rem;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+
+    @media (max-width: 760px) {
+      .layout { grid-template-columns: 1fr; }
+      .triage-panel { position: static; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">ResearchOps</a>
+  <a href="index.html">Home</a>
+  <a href="triage-bot.html" class="active">Intake Form</a>
+</nav>
+
+<div class="page-header">
+  <div class="badge">AI-Powered Workflow</div>
+  <h1>Research Study Intake</h1>
+  <p>Submit a new study request — AI classifies, scopes, and routes it instantly.</p>
+</div>
+
+<div class="layout">
+
+  <!-- Intake form -->
+  <div class="form-panel">
+    <h2>New Study Request</h2>
+    <form id="intakeForm" novalidate>
+
+      <div class="form-section">
+        <label>Researcher name <span class="required">*</span></label>
+        <input type="text" id="researcherName" placeholder="e.g. Jamie Torres" required />
+      </div>
+
+      <div class="form-section">
+        <label>Research goal <span class="required">*</span> <span class="hint">What question are you trying to answer?</span></label>
+        <textarea id="goal" placeholder="e.g. Understand why members drop off during the credit score improvement flow" required></textarea>
+      </div>
+
+      <hr class="divider" />
+
+      <div class="form-section">
+        <label>Research method <span class="required">*</span></label>
+        <div class="radio-group" id="methodGroup">
+          <label><input type="radio" name="method" value="moderated" /> Moderated usability sessions</label>
+          <label><input type="radio" name="method" value="unmoderated" /> Unmoderated / diary study (Dscout)</label>
+          <label><input type="radio" name="method" value="survey" /> Survey / quant (Qualtrics)</label>
+          <label><input type="radio" name="method" value="unsure" /> Not sure — recommend one</label>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <label>Target audience <span class="required">*</span></label>
+        <div class="select-wrap">
+          <select id="audience" required>
+            <option value="">Select audience…</option>
+            <option value="members">Existing Credit Karma members</option>
+            <option value="thin-file">Thin-file / credit-building segment</option>
+            <option value="prospects">Prospective members (non-users)</option>
+            <option value="internal">Internal stakeholders</option>
+          </select>
+        </div>
+      </div>
+
+      <hr class="divider" />
+
+      <div class="form-section">
+        <label>When do you need insights? <span class="required">*</span></label>
+        <div class="radio-group" id="timelineGroup">
+          <label><input type="radio" name="timeline" value="urgent" /> Under 2 weeks — urgent</label>
+          <label><input type="radio" name="timeline" value="normal" /> 2–4 weeks</label>
+          <label><input type="radio" name="timeline" value="relaxed" /> 4–8 weeks</label>
+          <label><input type="radio" name="timeline" value="flexible" /> Flexible / exploratory</label>
+        </div>
+      </div>
+
+      <hr class="divider" />
+
+      <div class="form-section">
+        <label>Sensitivity flags <span class="hint">Check all that apply</span></label>
+        <div class="checkbox-group" id="sensitivityGroup">
+          <label><input type="checkbox" name="sensitivity" value="financial" /> Study involves financial data</label>
+          <label><input type="checkbox" name="sensitivity" value="vulnerable" /> Involves a vulnerable or thin-file segment</label>
+          <label><input type="checkbox" name="sensitivity" value="minors" /> Participants may include minors</label>
+          <label><input type="checkbox" name="sensitivity" value="none" /> No sensitive data</label>
+        </div>
+      </div>
+
+      <div class="submit-row">
+        <button type="submit" class="submit-btn">Generate Triage Report</button>
+        <button type="button" class="reset-btn" id="resetBtn">Clear form</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Triage output -->
+  <div class="triage-panel">
+    <div class="card">
+      <div class="card-title">Triage Output</div>
+      <div id="triagePlaceholder" class="placeholder-state">
+        <div class="icon">📋</div>
+        <div>Fill out the form and submit to generate your triage report.</div>
+      </div>
+      <div id="triageResult" class="triage-result">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;gap:0.5rem;">
+          <span style="font-weight:700;font-size:0.95rem;color:#1a3a5c;line-height:1.3;" id="studyTitle">—</span>
+          <span class="priority-badge" id="priorityBadge">—</span>
+        </div>
+        <div class="triage-row"><span class="triage-label">Researcher</span><span class="triage-value" id="trResearcher">—</span></div>
+        <div class="triage-row"><span class="triage-label">Method type</span><span class="triage-value" id="trMethod">—</span></div>
+        <div class="triage-row"><span class="triage-label">Complexity</span><span class="triage-value" id="trComplexity">—</span></div>
+        <div class="triage-row"><span class="triage-label">Est. timeline</span><span class="triage-value" id="trTimeline">—</span></div>
+        <div class="triage-row"><span class="triage-label">Est. budget</span><span class="triage-value" id="trBudget">—</span></div>
+        <div class="triage-row"><span class="triage-label">Recommended tool</span><span class="triage-value" id="trTool">—</span></div>
+        <div class="triage-row"><span class="triage-label">Procurement needed</span><span class="triage-value" id="trProcure">—</span></div>
+      </div>
+    </div>
+
+    <div class="card" id="tagsCard" style="display:none;">
+      <div class="card-title">Tags &amp; Routing</div>
+      <div id="tagList" class="tag-list"></div>
+    </div>
+
+    <div class="card" id="flagsCard" style="display:none;">
+      <div class="card-title">Compliance &amp; Legal Flags</div>
+      <div id="flagList" class="flag-list"></div>
+    </div>
+
+    <div class="card" id="stepsCard" style="display:none;">
+      <div class="card-title">Recommended Next Steps</div>
+      <ul class="next-steps" id="stepsList"></ul>
+    </div>
+  </div>
+
+</div>
+
+<footer><p>&copy; 2026 ResearchOps — Credit Karma Demo Prototype</p></footer>
+
+<script>
+  // Highlight selected radio/checkbox labels
+  document.querySelectorAll('.radio-group, .checkbox-group').forEach(group => {
+    group.addEventListener('change', () => {
+      const isRadio = group.classList.contains('radio-group');
+      group.querySelectorAll('label').forEach(lbl => {
+        const inp = lbl.querySelector('input');
+        lbl.classList.toggle('selected', inp.checked);
+        if (isRadio && !inp.checked) lbl.classList.remove('selected');
+      });
+    });
+  });
+
+  // ── Triage logic ─────────────────────────────────────────────
+  function getMethodLabel(val) {
+    return { moderated: 'Qualitative (moderated)', unmoderated: 'Mixed-methods (diary)', survey: 'Quantitative', unsure: 'Qual recommended' }[val] || '—';
+  }
+
+  function getComplexity(a) {
+    let score = 0;
+    if (a.timeline === 'urgent') score += 2;
+    if (a.sensitivity.includes('financial') || a.sensitivity.includes('minors')) score += 2;
+    if (a.method === 'moderated') score += 1;
+    if (a.audience === 'thin-file') score += 1;
+    return score >= 4 ? 'High' : score >= 2 ? 'Medium' : 'Low';
+  }
+
+  function getTimeline(a) {
+    return { urgent: '2–3 weeks (expedited)', normal: '3–4 weeks', relaxed: '5–7 weeks', flexible: '6–8 weeks' }[a.timeline] || '4–6 weeks';
+  }
+
+  function getBudget(a) {
+    return { moderated: '$3,500–$6,000', unmoderated: '$4,000–$8,000', survey: '$800–$2,500', unsure: '$2,500–$5,000' }[a.method] || '$2,500–$5,000';
+  }
+
+  function getTool(a) {
+    return { moderated: 'Ethnio (recruit) + UserZoom', unmoderated: 'Dscout', survey: 'Qualtrics', unsure: 'Ethnio + Rally' }[a.method] || 'Ethnio';
+  }
+
+  function getPriority(a) {
+    if (a.timeline === 'urgent') return 'high';
+    if (a.sensitivity.includes('financial') || a.sensitivity.includes('minors')) return 'medium';
+    return 'low';
+  }
+
+  function getFlags(a) {
+    const flags = [];
+    if (a.sensitivity.includes('financial')) flags.push({ icon: '🔴', text: 'Financial data involved — Legal review required before recruitment begins.' });
+    if (a.sensitivity.includes('minors')) flags.push({ icon: '🔴', text: 'Minor participants — IRB review and parental consent forms required.' });
+    if (a.sensitivity.includes('vulnerable') || a.audience === 'thin-file') flags.push({ icon: '🟡', text: 'Vulnerable segment — CCPA consent language must be reviewed with Privacy team.' });
+    if (a.audience === 'prospects') flags.push({ icon: '🟡', text: 'External recruitment — ensure GDPR opt-in consent is captured at panel signup.' });
+    if (flags.length === 0) flags.push({ icon: '✅', text: 'No major compliance flags detected. Standard data handling protocols apply.' });
+    return flags;
+  }
+
+  function getTags(a) {
+    const tags = [];
+    if (a.method === 'moderated') tags.push({ label: 'Qual', cls: '' });
+    if (a.method === 'survey') tags.push({ label: 'Quant', cls: '' });
+    if (a.method === 'unmoderated') tags.push({ label: 'Longitudinal', cls: '' });
+    if (a.audience === 'members') tags.push({ label: 'Existing panel', cls: 'ok' });
+    if (a.audience === 'prospects') tags.push({ label: 'External recruit', cls: 'warn' });
+    if (a.audience === 'thin-file') tags.push({ label: 'Sensitive segment', cls: 'warn' });
+    if (a.sensitivity.some(s => s !== 'none')) tags.push({ label: 'Compliance review', cls: 'warn' });
+    tags.push({ label: 'Route → ResearchOps', cls: 'ok' });
+    return tags;
+  }
+
+  function getNextSteps(a) {
+    const steps = [];
+    if (getPriority(a) === 'high') steps.push('Flag to Research Ops lead for same-day scheduling review.');
+    steps.push('Open project ticket in tracker with this triage output attached.');
+    const flags = getFlags(a);
+    if (flags.some(f => f.icon !== '✅')) steps.push('Submit compliance pre-check to Privacy/Legal (2–3 day SLA).');
+    steps.push(`Initiate ${getTool(a)} screener setup for participant sourcing.`);
+    steps.push('Confirm budget approval with Research Manager before vendor engagement.');
+    steps.push('Schedule researcher assignment sync — align on study lead and timeline.');
+    return steps;
+  }
+
+  function renderTriage(a) {
+    document.getElementById('triagePlaceholder').style.display = 'none';
+    const result = document.getElementById('triageResult');
+    result.classList.add('visible');
+
+    const priority = getPriority(a);
+    const badge = document.getElementById('priorityBadge');
+    badge.textContent = priority.charAt(0).toUpperCase() + priority.slice(1) + ' Priority';
+    badge.className = `priority-badge priority-${priority}`;
+
+    const goal = a.goal || 'New Research Study';
+    document.getElementById('studyTitle').textContent = goal.length > 50 ? goal.slice(0, 48) + '…' : goal;
+    document.getElementById('trResearcher').textContent = a.researcher || '—';
+    document.getElementById('trMethod').textContent = getMethodLabel(a.method);
+    document.getElementById('trComplexity').textContent = getComplexity(a);
+    document.getElementById('trTimeline').textContent = getTimeline(a);
+    document.getElementById('trBudget').textContent = getBudget(a);
+    document.getElementById('trTool').textContent = getTool(a);
+
+    const flags = getFlags(a);
+    document.getElementById('trProcure').textContent = flags.some(f => f.icon === '🔴') ? 'Yes — Legal sign-off' : 'Standard vendor PO';
+
+    // Tags
+    const tagList = document.getElementById('tagList');
+    tagList.innerHTML = '';
+    getTags(a).forEach(t => {
+      const span = document.createElement('span');
+      span.className = `tag ${t.cls}`;
+      span.textContent = t.label;
+      tagList.appendChild(span);
+    });
+    document.getElementById('tagsCard').style.display = 'block';
+
+    // Flags
+    const flagList = document.getElementById('flagList');
+    flagList.innerHTML = '';
+    flags.forEach(f => {
+      const div = document.createElement('div');
+      div.className = 'flag-item';
+      div.innerHTML = `<span class="flag-icon">${f.icon}</span><span>${f.text}</span>`;
+      flagList.appendChild(div);
+    });
+    document.getElementById('flagsCard').style.display = 'block';
+
+    // Steps
+    const stepsList = document.getElementById('stepsList');
+    stepsList.innerHTML = '';
+    getNextSteps(a).forEach((s, i) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<div class="step-num">${i + 1}</div><span>${s}</span>`;
+      stepsList.appendChild(li);
+    });
+    document.getElementById('stepsCard').style.display = 'block';
+
+    // Scroll triage into view on mobile
+    if (window.innerWidth < 760) {
+      document.querySelector('.triage-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  // ── Form submit ───────────────────────────────────────────────
+  document.getElementById('intakeForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const goal = document.getElementById('goal').value.trim();
+    const researcher = document.getElementById('researcherName').value.trim();
+    const method = document.querySelector('input[name="method"]:checked')?.value || '';
+    const audience = document.getElementById('audience').value;
+    const timeline = document.querySelector('input[name="timeline"]:checked')?.value || '';
+    const sensitivity = [...document.querySelectorAll('input[name="sensitivity"]:checked')].map(el => el.value);
+
+    if (!goal || !method || !audience || !timeline) {
+      alert('Please complete all required fields before submitting.');
+      return;
+    }
+
+    renderTriage({ goal, researcher, method, audience, timeline, sensitivity });
+  });
+
+  // ── Reset ─────────────────────────────────────────────────────
+  document.getElementById('resetBtn').addEventListener('click', function() {
+    document.getElementById('intakeForm').reset();
+    document.querySelectorAll('.radio-group label, .checkbox-group label').forEach(l => l.classList.remove('selected'));
+    document.getElementById('triagePlaceholder').style.display = '';
+    document.getElementById('triageResult').classList.remove('visible');
+    ['tagsCard', 'flagsCard', 'stepsCard'].forEach(id => document.getElementById(id).style.display = 'none');
+  });
+</script>
+</body>
+</html>
